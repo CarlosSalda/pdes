@@ -5,11 +5,17 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ReviewModule } from './review/review.module';
+import { MeliModule } from './meli/meli.module';
+import { MeliApiService } from './meli/meli-api.service';
+import { MeliAuthService } from './meli/meli-auth.service';
+import mlConfig from './config/ml.config';
+import mongoConfig from './config/mongo.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [mlConfig, mongoConfig],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -20,8 +26,9 @@ import { ReviewModule } from './review/review.module';
     }),
     AuthModule,
     ReviewModule,
+    MeliModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MeliApiService, MeliAuthService],
 })
 export class AppModule {}

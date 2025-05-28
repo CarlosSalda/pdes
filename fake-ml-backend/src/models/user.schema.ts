@@ -40,6 +40,13 @@ export class User {
     default: [],
   })
   reviews: Types.ObjectId[];
+
+  @Prop({
+    type: Array<string>,
+    autopopulate: false,
+    default: [],
+  })
+  favourites: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

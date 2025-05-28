@@ -16,7 +16,6 @@ export class Review extends Document {
   @Prop({ type: Date, default: () => new Date() })
   createdAt: Date;
 
-  // <--- romper la circular import: ref como string
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   user: Types.ObjectId;
 }
