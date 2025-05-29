@@ -81,8 +81,8 @@ export class MeliAuthService {
     }
   }
 
-  private async loadAuthorizationCodeFromStart(): Promise<string> {
-    const { authCode } = this.config.get('meli');
-    return authCode || '';
+  private loadAuthorizationCodeFromStart(): Promise<string> {
+    const { authCode } = this.config.get('meli.authCode');
+    return authCode ?? '';
   }
 }

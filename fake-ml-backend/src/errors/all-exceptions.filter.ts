@@ -31,7 +31,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message =
         typeof res === 'string'
           ? res
-          : (res as any).message || exception.message;
+          : ((res as any).message ?? exception.message);
     } else {
       message = (exception as any).message || 'Internal server error';
     }

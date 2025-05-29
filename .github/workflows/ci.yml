@@ -3,9 +3,9 @@ name: CI
 # dispara en push/PR a main (o cámbialo por la rama que uses)
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 jobs:
   backend:
