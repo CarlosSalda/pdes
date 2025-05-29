@@ -1,15 +1,17 @@
 # Stage 1: build Vite + React frontend
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
 
-# Copy all frontend files
-COPY fake-ml-frontend/. ./
-
-# Install dependencies and build
+# 1) Copia lockfiles primero para cache de deps
+COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm \
- && pnpm install --frozen-lockfile \
- && pnpm build
+    && pnpm install --frozen-lockfile
 
+# 2) Copia el resto del código (todo el contexto)
+COPY . .
+
+# 3) Build
+RUN pnpm build
 # Stage 2: serve with Nginx
 FROM nginx:stable-alpine AS runner
 COPY --from=builder /usr/src/app/dist /usr/share/nginx/html

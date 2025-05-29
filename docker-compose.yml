@@ -3,19 +3,21 @@ version: "3.8"
 services:
   backend:
     build:
-      context: .
-      dockerfile: fake-ml-backend/Dockerfile
+      context: ./fake-ml-backend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
     depends_on:
       - mongo
+    env_file:
+      - ./fake-ml-backend/.env
 
   frontend:
     build:
-      context: .
-      dockerfile: fake-ml-frontend/Dockerfile
+      context: ./fake-ml-frontend
+      dockerfile: Dockerfile
     ports:
       - "5173:80"
     environment:
