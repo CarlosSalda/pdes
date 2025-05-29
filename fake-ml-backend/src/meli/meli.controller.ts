@@ -28,6 +28,10 @@ export class MeliController {
     description: 'Token válido',
     schema: { example: { accessToken: 'APP_USR-1234abcd...' } },
   })
+  @ApiResponse({
+    status: 404,
+    description: 'Error al obtener el token',
+  })
   async getToken() {
     const accessToken = await this.authService.getAccessToken();
     return { accessToken };
@@ -45,6 +49,10 @@ export class MeliController {
     status: 200,
     description: 'Datos del ítem retornados por MercadoLibre',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'Error al obtener los datos del ítem',
+  })
   async getItemById(@Param('id') id: string): Promise<Record<string, any>> {
     return await this.apiService.getItemById(id);
   }
@@ -61,8 +69,11 @@ export class MeliController {
     status: 200,
     description: 'Datos del ítem retornados por MercadoLibre',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'Error al obtener los datos del ítem',
+  })
   async getItemsByQuery(@Query('query') query: string) {
-    this.logger.log(`Obteniendo info del item ${query}`);
     return await this.apiService.getItemsByQuery(query);
   }
 }
