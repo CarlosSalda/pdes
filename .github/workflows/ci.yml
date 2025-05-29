@@ -12,44 +12,25 @@ jobs:
 
     defaults:
       run:
-        working-directory: fake-ml-backend # sigue valiendo para los pasos `run`
-
-    env:
-      CI: true
+        working-directory: fake-ml-backend
 
     steps:
       - uses: actions/checkout@v4
 
-      # 1) pnpm primero (sigue igual)
+      # instala PNPM (opcional, puedes quitarlo si confías en la versión que traiga corepack)
       - uses: pnpm/action-setup@v4
         with:
-          version: 9 # tu versión
+          version: 9
           run_install: false
 
-      # 2) Node + caché -> añade la ruta del lockfile
+      # instala Node + habilita corepack — sin cache de pnpm
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
-          cache-dependency-path: fake-ml-backend/pnpm-lock.yaml # <-- AQUI
 
       - run: corepack enable
 
-      # resto de pasos…
-      - name: Cache MongoMemoryServer
-        uses: actions/cache@v3
-        with:
-          path: ./.cache/mongodb-memory-server
-          key: ${{ runner.os }}-mongo-mem-${{ hashFiles('fake-ml-backend/pnpm-lock.yaml') }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint code
-        run: pnpm lint
-
-      - name: Build project
-        run: pnpm build
-
-      - name: Run tests
-        run: pnpm test -- --ci --runInBand --detectOpenHandles --forceExit
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm test --ci --runInBand --detectOpenHandles --forceExit
