@@ -1,0 +1,59 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+
+    steps:
+      # 1) Clona tu repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2) Configura Node.js 20 y cache de pnpm
+      - name: Setup Node.js & pnpm cache
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      # 3) Cachea el binario de mongodb-memory-server para acelerar CI
+      - name: Cache mongodb-memory-server binary
+        uses: actions/cache@v3
+        with:
+          path: ./.cache/mongodb-memory-server
+          key: ${{ runner.os }}-mongo-mem-server-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      # 4) Instala pnpm y dependencias
+      - name: Install dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install --frozen-lockfile
+
+      # 5) Linter (opcional pero muy recomendable)
+      - name: Lint code
+        run: pnpm lint
+
+      # 6) Compila tu código TS a /dist
+      - name: Build project
+        run: pnpm build
+
+      # 7) Ejecuta todos los tests (unit+integration)
+      - name: Run tests
+        run: pnpm test -- --ci --runInBand --detectOpenHandles --forceExit
+
+      # 8) Sube el reporte de cobertura como artefacto
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/
