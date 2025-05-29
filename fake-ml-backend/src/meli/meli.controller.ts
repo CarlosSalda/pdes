@@ -1,12 +1,5 @@
 // src/meli/meli.controller.ts
-import {
-  Controller,
-  Get,
-  Param,
-  HttpException,
-  HttpStatus,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -17,6 +10,7 @@ import {
 import { MeliAuthService } from './meli-auth.service';
 import { MeliApiService } from './meli-api.service';
 import { Logger } from '@nestjs/common';
+import { AuthGuard } from 'src/guard/auth.guard';
 
 @ApiTags('meli')
 @Controller('meli')
@@ -40,6 +34,7 @@ export class MeliController {
   }
 
   @Get('items/:id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Obtener información de un ítem de MercadoLibre' })
   @ApiParam({
     name: 'id',
@@ -50,11 +45,12 @@ export class MeliController {
     status: 200,
     description: 'Datos del ítem retornados por MercadoLibre',
   })
-  async getItemById(@Param('id') id: string) {
+  async getItemById(@Param('id') id: string): Promise<Record<string, any>> {
     return await this.apiService.getItemById(id);
   }
 
   @Get('items')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Obtener información de un ítem de MercadoLibre' })
   @ApiQuery({
     name: 'query',

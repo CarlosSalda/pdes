@@ -55,4 +55,14 @@ export class AuthService {
     });
     return { token };
   }
+
+  async getUser(token: string): Promise<User> {
+    const payload: {
+      email: string;
+      role: string;
+    } = this.jwtService.verify(token);
+    const user = await this.userModel.findOne({ email: payload.email }).exec();
+    if (!user) throw new UnauthorizedException('Credenciales inválidas');
+    return user;
+  }
 }
