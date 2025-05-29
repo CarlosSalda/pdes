@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { User, UserDocument } from 'src/models/user.schema';
+import { Role, User, UserDocument } from 'src/models/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +35,7 @@ export class AuthService {
     const exists = await this.userModel.findOne({ email });
     if (exists) throw new ConflictException('Email ya registrado');
 
-    const user = new this.userModel({ email, password, role: 'ADMIN' });
+    const user = new this.userModel({ email, password, role: Role.ADMIN });
     await user.save();
     return 'Registro exitoso!';
   }
