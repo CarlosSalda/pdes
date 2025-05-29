@@ -1,6 +1,5 @@
 name: CI
 
-# dispara en push/PR a main (o cámbialo por la rama que uses)
 on:
   push:
     branches: [master]
@@ -11,55 +10,46 @@ jobs:
   backend:
     runs-on: ubuntu-latest
 
-    # Todos los `run` a continuación se ejecutan desde fake-ml-backend/
     defaults:
       run:
-        working-directory: fake-ml-backend
+        working-directory: fake-ml-backend # sigue valiendo para los pasos `run`
 
     env:
       CI: true
 
     steps:
-      # 1) Clona todo el repo
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      # 2) Configura Node.js 20 + cache pnpm
-      - name: Setup Node.js & pnpm cache
-        uses: actions/setup-node@v3
+      # 1) pnpm primero (sigue igual)
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: "20"
-          cache: "pnpm"
+          version: 9 # tu versión
+          run_install: false
 
-      # 3) Cachea el binario de MongoMemoryServer para acelerar tests
-      - name: Cache MongoMemoryServer binary
+      # 2) Node + caché -> añade la ruta del lockfile
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: fake-ml-backend/pnpm-lock.yaml # <-- AQUI
+
+      - run: corepack enable
+
+      # resto de pasos…
+      - name: Cache MongoMemoryServer
         uses: actions/cache@v3
         with:
           path: ./.cache/mongodb-memory-server
-          key: ${{ runner.os }}-mongo-mem-${{ hashFiles('pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-mongo-mem-${{ hashFiles('fake-ml-backend/pnpm-lock.yaml') }}
 
-      # 4) Instala pnpm y dependencias (dev + prod)
       - name: Install dependencies
-        run: |
-          npm install -g pnpm
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
-      # 5) (Opcional) Lint
       - name: Lint code
         run: pnpm lint
 
-      # 6) Build (TS → JS)
       - name: Build project
         run: pnpm build
 
-      # 7) Ejecuta tests (unit + integration)
       - name: Run tests
         run: pnpm test -- --ci --runInBand --detectOpenHandles --forceExit
-
-      # 8) Sube cobertura como artefacto
-      - name: Upload coverage report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: coverage/
