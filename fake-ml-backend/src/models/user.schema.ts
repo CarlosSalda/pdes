@@ -1,6 +1,6 @@
 // src/users/schemas/user.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, ValidatorProps } from 'mongoose';
 import { Review } from 'src/review/schemas/review.schema';
 
 export type UserDocument = User & Document;
@@ -19,7 +19,7 @@ export class User {
     lowercase: true,
     validate: {
       validator: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-      message: (props: any) => `${props.value} is not a valid email`,
+      message: (props: ValidatorProps) => `${props.value} is not a valid email`,
     },
   })
   email: string;
