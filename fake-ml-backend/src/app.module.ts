@@ -8,6 +8,7 @@ import { ReviewModule } from './review/review.module';
 import { MeliModule } from './meli/meli.module';
 import { MeliApiService } from './meli/meli-api.service';
 import { MeliAuthService } from './meli/meli-auth.service';
+import { UserModule } from './user/user.module';
 import mlConfig from './config/ml.config';
 import mongoConfig from './config/mongo.config';
 
@@ -27,6 +28,7 @@ import mongoConfig from './config/mongo.config';
     AuthModule,
     ReviewModule,
     MeliModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, MeliApiService, MeliAuthService],

@@ -27,10 +27,14 @@ export class MeliApiService {
     }
   }
 
-  async getItemsByQuery(query: string): Promise<Record<string, any>[]> {
+  async getItemsByQuery(
+    query: string,
+    limit: number,
+    offset: number,
+  ): Promise<Record<string, any>[]> {
     const token = await this.auth.getAccessToken();
     this.logger.log(`Obteniendo info del item ${query}`);
-    const url = `https://api.mercadolibre.com/products/search?status=active&site_id=MLA&q=${query}`;
+    const url = `https://api.mercadolibre.com/products/search?status=active&site_id=MLA&q=${query}&limit=${limit}&offset=${offset}`;
     try {
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },

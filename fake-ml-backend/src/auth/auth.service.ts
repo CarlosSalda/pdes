@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { Role, User, UserDocument } from 'src/models/user.schema';
+import { Role, User, UserDocument } from 'src/user/models/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -57,6 +57,16 @@ export class AuthService {
   }
 
   async getUser(token: string): Promise<User> {
+    const payload: {
+      email: string;
+      role: string;
+    } = this.jwtService.verify(token);
+    const user = await this.userModel.findOne({ email: payload.email }).exec();
+    if (!user) throw new UnauthorizedException('Credenciales inválidas');
+    return user;
+  }
+
+  async logout(token: string) {
     const payload: {
       email: string;
       role: string;

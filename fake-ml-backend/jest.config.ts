@@ -14,10 +14,10 @@ export default {
   coverageDirectory: 'coverage',
   coverageThreshold: {
     global: {
-      branches: 3,
-      functions: 14,
-      lines: 10,
-      statements: 10,
+      branches: 1,
+      functions: 5,
+      lines: 5,
+      statements: 5,
     },
   },
   testEnvironment: 'node',

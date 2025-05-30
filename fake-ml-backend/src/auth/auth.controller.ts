@@ -1,5 +1,14 @@
 // src/auth/auth.controller.ts
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Get,
+  UnauthorizedException,
+  Req,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -41,5 +50,36 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   async login(@Body() dto: LoginDto) {
     return await this.authService.login(dto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('getUser')
+  @ApiOperation({ summary: 'Obtener usuario por token JWT' })
+  @ApiResponse({ status: 200, description: 'Usuario obtenido' })
+  @ApiResponse({ status: 401, description: 'Token inválido' })
+  async getUser(@Req() req: Request) {
+    const authHeader = req.headers['authorization'] as string;
+    const [scheme, token] = authHeader.split(' ');
+
+    if (scheme !== 'Bearer' || !token) {
+      throw new UnauthorizedException('Invalid authorization format');
+    }
+
+    return await this.authService.getUser(token);
+  }
+
+  @Post('logout')
+  @ApiOperation({ summary: 'Cerrar sesión' })
+  @ApiResponse({ status: 200, description: 'Sesión cerrada' })
+  @ApiResponse({ status: 401, description: 'Token inválido' })
+  async logout(@Req() req: Request) {
+    const authHeader = req.headers['authorization'] as string;
+    const [scheme, token] = authHeader.split(' ');
+
+    if (scheme !== 'Bearer' || !token) {
+      throw new UnauthorizedException('Invalid authorization format');
+    }
+
+    return await this.authService.logout(token);
   }
 }

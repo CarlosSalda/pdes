@@ -2,9 +2,8 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, disconnect } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
 import { Role, User, UserDocument, UserSchema } from '../user.schema';
 
 jest.setTimeout(60_000);
@@ -39,7 +38,7 @@ describe('User Schema', () => {
   });
 
   afterAll(async () => {
-    await mongoose.disconnect();
+    await disconnect();
     if (mongoServer) {
       await mongoServer.stop();
     }
