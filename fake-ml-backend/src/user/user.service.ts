@@ -11,10 +11,10 @@ export class UserService {
   private readonly logger = new Logger('UserService');
 
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    @InjectModel(Review.name) private reviewModel: Model<Review>,
-    @InjectModel(Cart.name) private cartModel: Model<Cart>,
-    @InjectModel(Cart.name) private productModel: Model<Product>,
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Review.name) private readonly reviewModel: Model<Review>,
+    @InjectModel(Cart.name) private readonly cartModel: Model<Cart>,
+    @InjectModel(Cart.name) private readonly productModel: Model<Product>,
   ) {}
 
   async addFavourite(userId: string, productId: string) {

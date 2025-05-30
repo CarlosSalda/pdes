@@ -13,16 +13,6 @@ export const getUser = async (token: string | null) => {
   return response.data;
 };
 
-// export const register = async (data: any) => {
-//   const response = await axiosInstance.post("/auth/register", data);
-//   return response.data;
-// };
-
-// export const registerAdmin = async (data: any) => {
-//   const response = await axiosInstance.post("/auth/register-admin", data);
-//   return response.data;
-// };
-
 export const login = async (data: { email: string; password: string }) => {
   console.log("Axios baseURL:", axiosInstance.defaults.baseURL);
   console.log(config);

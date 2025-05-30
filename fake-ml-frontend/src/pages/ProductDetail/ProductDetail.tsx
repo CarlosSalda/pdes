@@ -14,7 +14,7 @@ import { getProductById } from "../../helpers/api/ml";
 import SearchAppBar from "../Home/components/SearchAppBar";
 import ImageCarousel from "./components/ImageCarousel";
 
-interface RouteParams extends Record<string, string | undefined> {
+interface RouteParams extends Record<string, string> {
   id: string;
 }
 
@@ -32,7 +32,7 @@ const ProductDetail: React.FC = () => {
         if (product && Object.keys(product).length > 0) {
           return;
         } else {
-          const fetched = await getProductById(id!, token);
+          const fetched = await getProductById(id ?? "", token);
           setProduct(fetched.data);
         }
       } catch (err) {
