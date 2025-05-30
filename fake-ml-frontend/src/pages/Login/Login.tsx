@@ -23,7 +23,7 @@ interface FormField {
 const Login: React.FC = () => {
   const [status, setStatus] = useState<{ valid: boolean }>({ valid: true });
   const [formFields, setFormFields] = useState<FormField[]>([
-    { id: 1, label: "Usuario", required: true, model: "" },
+    { id: 1, label: "Email", required: true, model: "" },
     { id: 2, label: "Contraseña", required: true, model: "", type: "password" },
   ]);
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ const Login: React.FC = () => {
       setDisabled(false);
     });
 
-    if (response.status === "success") {
+    if (response && response.status === "success") {
       setToken(response.data.token);
       Cookies.set("token", response.data.token, { expires: 7, secure: true });
       navigate("/home");
@@ -84,6 +84,7 @@ const Login: React.FC = () => {
               label={field.label}
               type={field.type ?? "text"}
               value={field.model}
+              name={field.label}
               InputLabelProps={{ shrink: true }}
               onChange={(e) => handleInputChange(e, field.id)}
               error={!status.valid && field.required && !field.model}
@@ -96,7 +97,7 @@ const Login: React.FC = () => {
           ))}
           {!status.valid && (
             <Typography variant="body2" color="error" align="center">
-              Usuario o contraseña incorrectos
+              Email o contraseña incorrectos
             </Typography>
           )}
           <Button
