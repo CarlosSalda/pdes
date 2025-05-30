@@ -10,11 +10,27 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
+    "Menu": "link:@mui/icons-material/Menu",
+    "Search": "link:@mui/icons-material/Search",
+    "axios": "^1.9.0",
+    "js-cookie": "^3.0.5",
+    "path": "^0.12.7",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.1",
+    "react-toastify": "^11.0.5",
+    "swiper": "^11.2.8",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^22.15.26",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react-swc": "^3.9.0",

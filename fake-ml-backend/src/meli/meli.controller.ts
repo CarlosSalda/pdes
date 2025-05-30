@@ -65,6 +65,16 @@ export class MeliController {
     description: 'Query de búsqueda',
     example: 'camiseta',
   })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Cantidad de ítems a devolver',
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'offset',
+    description: 'Cantidad de ítems desde el que comenzar a devolver',
+    example: 0,
+  })
   @ApiResponse({
     status: 200,
     description: 'Datos del ítem retornados por MercadoLibre',
@@ -73,7 +83,15 @@ export class MeliController {
     status: 404,
     description: 'Error al obtener los datos del ítem',
   })
-  async getItemsByQuery(@Query('query') query: string) {
-    return await this.apiService.getItemsByQuery(query);
+  async getItemsByQuery(
+    @Query('query') query: string,
+    @Query('limit') limit: number,
+    @Query('offset') offset: number,
+  ): Promise<Record<string, any>[]> {
+    return await this.apiService.getItemsByQuery(
+      query,
+      limit ?? 10,
+      offset ?? 0,
+    );
   }
 }

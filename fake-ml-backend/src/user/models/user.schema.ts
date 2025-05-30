@@ -1,7 +1,7 @@
-// src/users/schemas/user.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types, ValidatorProps } from 'mongoose';
 import { Review } from 'src/review/schemas/review.schema';
+import { Cart } from './cart.schema';
 
 export type UserDocument = User & Document;
 
@@ -42,11 +42,20 @@ export class User {
   reviews: Types.ObjectId[];
 
   @Prop({
-    type: Array<string>,
+    type: [String],
     autopopulate: false,
     default: [],
   })
   favourites: string[];
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: Cart.name,
+    required: true,
+    unique: true,
+    default: new Types.ObjectId(),
+  })
+  cart: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

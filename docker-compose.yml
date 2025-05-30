@@ -22,6 +22,8 @@ services:
       - "5173:80"
     environment:
       - NODE_ENV=production
+    env_file:
+      - ./fake-ml-frontend/.env
 
   mongo:
     image: mongo:6

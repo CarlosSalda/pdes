@@ -1,35 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import { Home, Login } from "./pages";
+import { ProtectedRoute } from "./components";
+import { useEffect, useState } from "react";
+import { useStore } from "./store/useStore";
+import { getUser } from "./helpers/api/apiCalls";
+import ProductDetail from "./pages/ProductDetail";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const token = useStore((state) => state.token);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        await getUser(token);
+      } catch {
+        useStore.getState().setToken(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkAuthentication();
+  }, [token]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  // derivás la autenticación simplemente así
+  const isAuthenticated = Boolean(token);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute element={Home} isAuthenticated={isAuthenticated} />
+          }
+        />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute element={Home} isAuthenticated={isAuthenticated} />
+          }
+        />
+        <Route
+          path="/single-product/:id"
+          element={
+            <ProtectedRoute
+              element={ProductDetail}
+              isAuthenticated={isAuthenticated}
+            />
+          }
+        />
+        <Route
+          path="*"
+          element={<Navigate to={isAuthenticated ? "/home" : "/login"} />}
+        />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
