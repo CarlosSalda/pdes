@@ -49,7 +49,7 @@ const Login: React.FC = () => {
       email: formFields[0].model,
       password: formFields[1].model,
     }).catch((err) => {
-      console.log(err);
+      console.log("Error al enviar el login", err);
       setStatus({ valid: false });
       setDisabled(false);
     });
