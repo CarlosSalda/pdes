@@ -4,45 +4,38 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Instala pnpm globalmente
+# Instala pnpm
 RUN npm install -g pnpm
 
-# Copia los archivos de lock y package.json para caché de dependencias
-COPY package.json pnpm-lock.yaml ./
+# Copia lockfiles y cfg de compilación
+COPY package.json pnpm-lock.yaml nest-cli.json tsconfig*.json ./
 
-# Instala todas las dependencias (dev + prod)
+# Instala todas las deps + cache
 RUN pnpm install --frozen-lockfile
 
-# Copia el resto del código fuente
-COPY . .
+# Copia sólo el src para invalidar menos capas
+COPY src ./src
 
-# Compila el proyecto NestJS (genera /app/dist)
+# Compila a dist/
 RUN pnpm build
 
-
 # ───────────────────
-# Etapa 2: Producción
+# Etapa 2: Runner
 # ───────────────────
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Instala pnpm en el contenedor de producción
+# Instala pnpm (para arrancar)
 RUN npm install -g pnpm
 
-# Solo necesitamos package.json y pnpm-lock para las deps de prod
-COPY package.json pnpm-lock.yaml ./
-
-# Instala únicamente dependencias de producción
-RUN pnpm install --prod --frozen-lockfile
-
-# Copia los artefactos compilados desde la etapa builder
+# Copia únicamente el código ya procesado + deps de producción
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY package.json ./
 
-# Ajusta la variable de entorno
+# Ajustes y puerto
 ENV NODE_ENV=production
-
-# Expone el puerto que usa Nest (por defecto 3000)
 EXPOSE 3000
 
-# Lanza el entrypoint de Nest
+# Arranca la app
 CMD ["node", "dist/main.js"]
