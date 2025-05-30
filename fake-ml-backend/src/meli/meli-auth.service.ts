@@ -38,8 +38,20 @@ export class MeliAuthService {
   }
 
   private async obtain(): Promise<void> {
-    const { clientId, clientSecret, redirectUri } = this.config.get('meli');
-    const code = await this.loadAuthorizationCodeFromStart();
+    const {
+      clientId,
+      clientSecret,
+      redirectUri,
+    }: {
+      clientId: string;
+      clientSecret: string;
+      redirectUri: string;
+    } = this.config.get('meli') ?? {
+      clientId: '',
+      clientSecret: '',
+      redirectUri: '',
+    };
+    const code = this.loadAuthorizationCodeFromStart();
     const url = 'https://api.mercadolibre.com/oauth/token';
     const payload = {
       grant_type: 'authorization_code',
@@ -55,12 +67,21 @@ export class MeliAuthService {
   }
 
   private async refresh(): Promise<void> {
-    const { clientId, clientSecret } = this.config.get('meli');
+    const {
+      clientId,
+      clientSecret,
+    }: {
+      clientId: string;
+      clientSecret: string;
+    } = this.config.get('meli') ?? {
+      clientId: '',
+      clientSecret: '',
+    };
     const url = 'https://api.mercadolibre.com/oauth/token';
     const payload = {
       grant_type: 'refresh_token',
-      client_id: clientId,
-      client_secret: clientSecret,
+      client_id: clientId ?? '',
+      client_secret: clientSecret ?? '',
       refresh_token: this.refreshToken,
     };
     const { data } = await axios.post<TokenResponse>(url, payload);
@@ -81,8 +102,14 @@ export class MeliAuthService {
     }
   }
 
-  private async loadAuthorizationCodeFromStart(): Promise<string> {
-    const { authCode } = this.config.get('meli');
-    return authCode || '';
+  private loadAuthorizationCodeFromStart(): string {
+    const {
+      authCode,
+    }: {
+      authCode: string;
+    } = this.config.get('meli') ?? {
+      authCode: '',
+    };
+    return authCode ?? '';
   }
 }

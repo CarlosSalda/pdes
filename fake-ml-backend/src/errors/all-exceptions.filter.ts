@@ -31,14 +31,19 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message =
         typeof res === 'string'
           ? res
-          : (res as any).message || exception.message;
+          : ((res as Record<string, string>).message ?? exception.message);
     } else {
-      message = (exception as any).message || 'Internal server error';
+      message =
+        (exception as Record<string, string>).message ||
+        'Internal server error';
     }
 
     // If it’s not an HttpException, log it as an error
     if (!isHttp) {
-      this.logger.error('Unhandled exception', (exception as any).stack);
+      this.logger.error(
+        'Unhandled exception',
+        (exception as Record<string, string>).stack,
+      );
     }
 
     // Send the formatted response
